@@ -1,0 +1,18 @@
+{
+  "skillOverrides": {
+    "context-compressor": "user-invocable-only",
+    "decision-log": "user-invocable-only",
+    "dl-entrenamiento-gpu": "user-invocable-only",
+    "dl-rag-agentes": "user-invocable-only",
+    "elegir-modelo": "user-invocable-only",
+    "project-memory": "user-invocable-only",
+    "prompt-improver": "user-invocable-only",
+    "repo-intake": "user-invocable-only",
+    "skill-finder": "user-invocable-only",
+    "skill-refiner": "user-invocable-only",
+    "web-auditoria": "user-invocable-only",
+    "web-landing-cliente": "user-invocable-only",
+    "web-motion": "user-invocable-only",
+    "web-proyecto-nextjs": "user-invocable-only"
+  }
+}
