@@ -21,6 +21,13 @@ de Claude el análogo específico es `skill-auditor`.
 2. **Stack y manifiestos**: `pyproject.toml`/`requirements*.txt`, `package.json`, `Cargo.toml`, `compose*.yml`, `Dockerfile`, CI (`.github/workflows/`). Versiones fijadas ¿sí/no? ¿Lockfile presente y coherente?
 3. **Puntos de entrada**: binarios/scripts declarados (`scripts` de package.json, `[project.scripts]`, `Makefile`, `main.py`/`index.*`), servicios que levanta, puertos que abre.
 4. **Scripts con efectos**: hooks de instalación (`postinstall`, `setup.py` con código, makefiles que descargan), instaladores `curl|bash` (prohibidos por SAFETY_RULES — anotar y no ejecutar). `grep -rnE 'curl|wget|postinstall|preinstall' --include='*.json' --include='Makefile' --include='*.sh' | head`.
+4b. **Código que se ejecuta solo o esconde un binario (obligatorio, también en repos con muchas estrellas):**
+   `grep -rnE 'subprocess|Popen|os\.system|exec\(|eval\(|compile\(|b64decode|marshal|winreg|CurrentVersion.Run|__import__' --include='*.py' --include='*.js' --include='*.ts' . | head -30`
+   y líneas desmesuradas (blobs): `awk 'length($0)>2000{print FILENAME":"FNR" ("length($0)" car.)"}' $(git ls-files '*.py' '*.js' '*.ts') | head`.
+   Un `Popen`/`run` a nivel de módulo (fuera de funciones) o un blob base64 grande es **malware hasta que se demuestre lo
+   contrario**: no se instala ni se importa, se borra el clon y se anota en el informe con la huella (sha256). Caso real
+   (2026-10): un «indexador de Polymarket» con unas 600 estrellas cuyo `cli.py` lanzaba, al importarse, un cargador de un
+   `.exe` de Windows embebido en base64 con arranque automático en el registro.
 5. **Dependencias**: cuántas, cuán mantenidas las críticas, alguna sospechosa (typosquatting, versión flotante `*`). No instalar para averiguarlo: leer manifiestos.
 6. **Secretos y datos**: qué espera (`.env.example`, config); confirmar que no hay secretos reales commiteados (`grep -rniE '(api[_-]?key|secret|token|password)\s*[:=]' --include='*.env*' --include='*.y*ml' --include='*.json' | grep -viE 'example|placeholder|your[_-]'`); qué datos necesita y si son sensibles.
 7. **Estado y riesgos**: última actividad, tests existentes ¿corren en CI?, licencia, TODOs/FIXMEs masivos, partes muertas.
